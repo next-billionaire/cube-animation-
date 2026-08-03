@@ -7,9 +7,10 @@ export function useIntro() {
   const [isReady, setIsReady] = useState<boolean>(false);
 
   useEffect(() => {
-    // Check if the intro has already been played in this session
-    const hasPlayed = sessionStorage.getItem("introPlayed");
-    
+    // Temporarily ignoring sessionStorage so the intro plays on every refresh during development
+    // const hasPlayed = sessionStorage.getItem("introPlayed");
+    const hasPlayed = false; 
+
     if (!hasPlayed) {
       setShouldPlayIntro(true);
       // We don't set it to true immediately here, we let the intro component set it 
