@@ -19,12 +19,12 @@ export function HeroCube() {
   
   // Materials
   const faceMats = useMemo(() => [
-    new MeshPhysicalMaterial({color: 0xF7B500, transparent:true, opacity:0.12, roughness:0.1, metalness:0.3}),
-    new MeshPhysicalMaterial({color: 0xFF3B30, transparent:true, opacity:0.12, roughness:0.1, metalness:0.3}),
-    new MeshPhysicalMaterial({color: 0x111111, transparent:true, opacity:0.15, roughness:0.1, metalness:0.5}),
-    new MeshPhysicalMaterial({color: 0x111111, transparent:true, opacity:0.15, roughness:0.1, metalness:0.5}),
-    new MeshPhysicalMaterial({color: 0x000000, transparent:true, opacity:0.02, roughness:0.1, metalness:0.5}),
-    new MeshPhysicalMaterial({color: 0x222222, transparent:true, opacity:0.15, roughness:0.1, metalness:0.5})
+    new MeshPhysicalMaterial({color: 0xF7B500, roughness:0.2, metalness:0.3}), // Right - Yellow
+    new MeshPhysicalMaterial({color: 0xFF3B30, roughness:0.2, metalness:0.3}), // Left - Red
+    new MeshPhysicalMaterial({color: 0x111111, roughness:0.2, metalness:0.5}), // Top - Dark
+    new MeshPhysicalMaterial({color: 0x111111, roughness:0.2, metalness:0.5}), // Bottom - Dark
+    new MeshPhysicalMaterial({color: 0x000000, roughness:0.2, metalness:0.5}), // Front - Black
+    new MeshPhysicalMaterial({color: 0x222222, roughness:0.2, metalness:0.5})  // Back - Dark gray
   ], []);
 
   // Particles
