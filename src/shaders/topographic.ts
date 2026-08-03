@@ -47,7 +47,8 @@ export const topographicFragmentShader = `
     float a = 0.5;
     vec2 shift = vec2(100.0);
     mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.50));
-    for (int i = 0; i < 4; ++i) { // Reduced octaves for softer, less noisy look
+    // Reduced to 2 octaves for very smooth, minimal curves
+    for (int i = 0; i < 2; ++i) { 
       v += a * snoise(x);
       x = rot * x * 2.0 + shift;
       a *= 0.5;
@@ -73,10 +74,12 @@ export const topographicFragmentShader = `
     q.y = fbm( p + vec2(1.0) );
 
     vec2 r = vec2(0.);
-    r.x = fbm( p + 1.0*q + vec2(1.7,9.2)+ 0.15*t );
-    r.y = fbm( p + 1.0*q + vec2(8.3,2.8)+ 0.126*t );
+    // Reduced the multiplier from 1.0 to 0.4 to reduce chaotic curves
+    r.x = fbm( p + 0.4*q + vec2(1.7,9.2)+ 0.15*t );
+    r.y = fbm( p + 0.4*q + vec2(8.3,2.8)+ 0.126*t );
 
-    float f = fbm(p + r);
+    // Reduced warp influence (0.5 instead of 1.0) for smoother lines
+    float f = fbm(p + 0.5*r);
 
     // Number of contour lines mapped over the noise value (lower for fewer lines and massive spacing)
     float lineVal = f * 3.0; 
