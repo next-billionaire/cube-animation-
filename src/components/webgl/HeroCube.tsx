@@ -2,7 +2,7 @@
 
 import { useRef, useMemo, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Group, Mesh, BoxGeometry, MeshPhysicalMaterial, MeshStandardMaterial, Points, PointLight, MeshBasicMaterial } from "three";
+import { Group, Mesh, BoxGeometry, MeshPhysicalMaterial, Points, PointLight, MeshBasicMaterial } from "three";
 import { Text } from "@react-three/drei";
 import { globalScrollState } from "@/store/scrollState";
 
@@ -18,15 +18,14 @@ export function HeroCube() {
   const halfGeo = useMemo(() => new BoxGeometry(2, 0.98, 2), []);
   
   // Materials
-  const faceMats = useMemo(() => {
-    // Create a solid, opaque white material
-    const whiteMat = new MeshStandardMaterial({
-      color: 0xFFFFFF, 
-      roughness: 0.3, 
-      metalness: 0.1,
-    });
-    return [whiteMat, whiteMat, whiteMat, whiteMat, whiteMat, whiteMat];
-  }, []);
+  const faceMats = useMemo(() => [
+    new MeshPhysicalMaterial({color: 0xF7B500, roughness:0.2, metalness:0.3}), // Right - Yellow
+    new MeshPhysicalMaterial({color: 0xFF3B30, roughness:0.2, metalness:0.3}), // Left - Red
+    new MeshPhysicalMaterial({color: 0x111111, roughness:0.2, metalness:0.5}), // Top - Dark
+    new MeshPhysicalMaterial({color: 0x111111, roughness:0.2, metalness:0.5}), // Bottom - Dark
+    new MeshPhysicalMaterial({color: 0x000000, roughness:0.2, metalness:0.5}), // Front - Black
+    new MeshPhysicalMaterial({color: 0x222222, roughness:0.2, metalness:0.5})  // Back - Dark gray
+  ], []);
 
   // Particles
   const particleCount = typeof window !== 'undefined' && window.innerWidth < 700 ? 260 : 650;
@@ -120,12 +119,11 @@ export function HeroCube() {
 
   return (
     <>
-      <ambientLight color={0xffffff} intensity={0.7} />
-      <directionalLight position={[5, 5, 5]} intensity={1.5} color={0xffffff} />
-      <directionalLight position={[-5, -5, -5]} intensity={0.5} color={0xffffff} />
+      <ambientLight color={0x1a1408} intensity={1.2} />
       
       <group ref={groupRef}>
         <pointLight ref={coreLightRef} color={0xF7B500} intensity={2.4} distance={12} decay={2} position={[0,0,0]} />
+        <pointLight color={0xFF3B30} intensity={0.5} distance={14} position={[-4,-2,3]} />
 
         <points ref={particlesRef}>
           <bufferGeometry>
@@ -135,10 +133,28 @@ export function HeroCube() {
         </points>
 
         {/* Top Half */}
-        <mesh ref={topHalfRef} geometry={halfGeo} material={faceMats} position={[0, 0.5, 0]} />
+        <mesh ref={topHalfRef} geometry={halfGeo} material={faceMats} position={[0, 0.5, 0]}>
+          <lineSegments>
+            <edgesGeometry attach="geometry" args={[halfGeo]} />
+            <lineBasicMaterial attach="material" color={0xF7B500} transparent opacity={0.95} />
+          </lineSegments>
+          <lineSegments scale={1.01}>
+            <edgesGeometry attach="geometry" args={[halfGeo]} />
+            <lineBasicMaterial attach="material" color={0xF7B500} transparent opacity={0.25} />
+          </lineSegments>
+        </mesh>
 
         {/* Bottom Half */}
-        <mesh ref={bottomHalfRef} geometry={halfGeo} material={faceMats} position={[0, -0.5, 0]} />
+        <mesh ref={bottomHalfRef} geometry={halfGeo} material={faceMats} position={[0, -0.5, 0]}>
+          <lineSegments>
+            <edgesGeometry attach="geometry" args={[halfGeo]} />
+            <lineBasicMaterial attach="material" color={0xF7B500} transparent opacity={0.95} />
+          </lineSegments>
+          <lineSegments scale={1.01}>
+            <edgesGeometry attach="geometry" args={[halfGeo]} />
+            <lineBasicMaterial attach="material" color={0xF7B500} transparent opacity={0.25} />
+          </lineSegments>
+        </mesh>
 
         {/* Glow Plane */}
         <mesh rotation={[-Math.PI/2, 0, 0]}>

@@ -75,7 +75,7 @@ export function HeroSection() {
   const openAmt = smooth(mapRange(p, 0.65, 0.9));
 
   return (
-    <section ref={containerRef} className="relative w-full z-10" style={{ height: "300vh" }}>
+    <section id="home" ref={containerRef} className="relative w-full z-10" style={{ height: "300vh" }}>
       <div className="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center pointer-events-none">
         
         {/* Phase 1: Hero */}
