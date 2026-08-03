@@ -131,8 +131,8 @@ export function HeroSection() {
                     left: isLeft ? '8vw' : 'auto',
                     right: !isLeft ? '8vw' : 'auto',
                     opacity: t,
-                    // Slide in from edges
-                    transform: `translate(${isLeft ? -100 * (1-t) : 100 * (1-t)}px, ${(yShiftBase / 100) * 50 * (1-t)}px)`
+                    // Explode OUT from the center box
+                    transform: `translate(${isLeft ? 35 * (1-t) : -35 * (1-t)}vw, ${(50 - def.top) * (1-t)}vh) scale(${0.3 + 0.7*t})`
                   }}
                 >
                   <div className={`flex items-center gap-4 ${!isLeft ? 'flex-row-reverse text-right' : ''}`}>
