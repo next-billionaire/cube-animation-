@@ -23,18 +23,30 @@ export function HeroSection() {
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const start = rect.top; 
-      // Subtract window height so progress hits 1 when the bottom of the container reaches the bottom of the screen
       const distance = rect.height - window.innerHeight;
-      
       const raw = -start / distance;
       const progress = Math.max(0, Math.min(1, raw));
       
-      setP(progress);
-      globalScrollState.heroProgress = progress;
+      globalScrollState.targetProgress = progress;
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Sync DOM with the smoothed progress at 60fps
+  useEffect(() => {
+    let frameId: number;
+    const loop = () => {
+      // Only trigger a re-render if the value actually changed significantly
+      setP((prev) => {
+        const curr = globalScrollState.currentProgress;
+        return Math.abs(prev - curr) > 0.001 ? curr : prev;
+      });
+      frameId = requestAnimationFrame(loop);
+    };
+    loop();
+    return () => cancelAnimationFrame(frameId);
   }, []);
 
   // Easing and mapping functions

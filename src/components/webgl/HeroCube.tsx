@@ -63,8 +63,9 @@ export function HeroCube() {
   useFrame((state, delta) => {
     if (!groupRef.current) return;
 
-    // Read global state (0 to 1)
-    const p = globalScrollState.heroProgress;
+    // Apply "scrub: 1" style momentum for buttery smoothness
+    globalScrollState.currentProgress += (globalScrollState.targetProgress - globalScrollState.currentProgress) * 0.08;
+    const p = globalScrollState.currentProgress;
     
     // Cube X Position
     // Starts at 1.7 (right side). Moves to 0 (center) between p=0.2 and p=0.3
@@ -82,8 +83,8 @@ export function HeroCube() {
     groupRef.current.rotation.y += (targetRotY - groupRef.current.rotation.y) * 0.06;
     groupRef.current.rotation.x += (targetRotX - groupRef.current.rotation.x) * 0.06;
 
-    // Shift cube horizontally
-    groupRef.current.position.x += (cubeX - groupRef.current.position.x) * 0.09;
+    // Instantly sync horizontal position to the globally smoothed progress
+    groupRef.current.position.x = cubeX;
 
     // Split the cube
     const openDist = openAmt * 0.9;

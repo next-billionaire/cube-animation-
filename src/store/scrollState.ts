@@ -1,3 +1,4 @@
 export const globalScrollState = {
-  heroProgress: 0,
+  targetProgress: 0,
+  currentProgress: 0,
 };
