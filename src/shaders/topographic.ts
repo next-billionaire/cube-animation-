@@ -59,8 +59,13 @@ export const topographicFragmentShader = `
     // Lower scale significantly for massive, sweeping contours
     vec2 p = vUv * 0.15; 
     
-    // Extremely slow breathing animation
-    float t = uTime * 0.015; 
+    // Add continuous directional scrolling (panning upwards)
+    // This gives the feeling of moving over a map rather than just breathing in place
+    p.y -= uTime * 0.02;
+    p.x -= uTime * 0.01;
+    
+    // Extremely slow breathing animation for the warping effect
+    float t = uTime * 0.008;  
 
     // Organic Domain Warping
     vec2 q = vec2(0.);
