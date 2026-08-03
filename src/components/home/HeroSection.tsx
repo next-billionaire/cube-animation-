@@ -119,7 +119,6 @@ export function HeroSection() {
               const t = smooth(mapRange(openAmt, start, start + 0.28));
               
               const isLeft = def.side === 'left';
-              // Convert vh to px for math
               const yShiftBase = 50 - def.top; 
               
               return (
@@ -128,27 +127,29 @@ export function HeroSection() {
                   className="absolute flex flex-col"
                   style={{
                     top: `${def.top}%`,
-                    left: isLeft ? '8vw' : 'auto',
-                    right: !isLeft ? '8vw' : 'auto',
+                    left: isLeft ? '6vw' : 'auto',
+                    right: !isLeft ? '6vw' : 'auto',
                     opacity: t,
                     // Explode OUT from the center box
                     transform: `translate(${isLeft ? 35 * (1-t) : -35 * (1-t)}vw, ${(50 - def.top) * (1-t)}vh) scale(${0.3 + 0.7*t})`
                   }}
                 >
-                  <div className={`flex items-center gap-4 ${!isLeft ? 'flex-row-reverse text-right' : ''}`}>
-                    <div className="flex items-center justify-center shrink-0">
+                  <div className={`flex items-center gap-6 ${!isLeft ? 'flex-row-reverse text-right' : ''}`}>
+                    {/* Icon with faint border */}
+                    <div className="flex items-center justify-center shrink-0 w-12 h-12 rounded-[14px] border border-white/10 bg-white/[0.02]">
                       <svg 
-                        width="28" height="28" viewBox="0 0 24 24" fill="none" 
-                        stroke={def.color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" 
-                        style={{ filter: `drop-shadow(0 0 6px ${def.color})` }}
+                        width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                        stroke="#F7B500" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" 
                         dangerouslySetInnerHTML={{ __html: def.icon }}
                       />
                     </div>
+                    {/* Typography */}
                     <div className="flex flex-col gap-1">
-                      <div className="text-[16px] font-extrabold italic tracking-[0.02em] uppercase whitespace-nowrap text-white">
-                        <span>{def.title1}</span> <span style={{ color: def.color }}>{def.title2}</span>
+                      <div className="text-[17px] font-light tracking-wide uppercase whitespace-nowrap text-white">
+                        {def.title1} <br/>
+                        <span className="text-[#F7B500]">{def.title2}</span>
                       </div>
-                      <div className="text-[10px] text-white/60 whitespace-nowrap font-medium tracking-[0.04em] uppercase">
+                      <div className="text-[9px] text-neutral-500 whitespace-nowrap font-medium tracking-widest uppercase mt-1">
                         {def.sub}
                       </div>
                     </div>
@@ -159,10 +160,42 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Scroll Hint */}
-        <div className="absolute bottom-9 left-1/2 -translate-x-1/2 text-[10px] tracking-[.25em] uppercase text-neutral-500 flex flex-col items-center gap-2">
-          <span>Scroll</span>
-          <div className="w-[1px] h-9 bg-gradient-to-b from-[#F7B500] to-transparent opacity-50 animate-pulse"></div>
+        {/* Scroll Hint (Bottom Center) */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[11px] tracking-[.25em] uppercase text-neutral-400 flex flex-col items-center gap-4">
+          <span>SCROLL</span>
+          <div className="w-[1px] h-12 bg-gradient-to-b from-[#F7B500]/60 to-transparent"></div>
+        </div>
+
+        {/* Header Overlay */}
+        <div className="absolute top-0 left-0 w-full px-[6vw] py-10 flex items-start justify-between pointer-events-auto">
+          {/* Logo */}
+          <div className="flex flex-col text-white font-space-grotesk font-bold tracking-tighter text-[22px] leading-[0.9]">
+            <span>BRAND</span>
+            <span className="text-[#F7B500]">MASALA.</span>
+          </div>
+
+          {/* ESTD Pill */}
+          <div className="absolute left-1/2 -translate-x-1/2 top-10">
+            <div className="px-5 py-2 border border-[#F7B500]/20 rounded-full text-[10px] tracking-[0.2em] text-[#F7B500] uppercase font-medium">
+              Estd in 2024
+            </div>
+          </div>
+
+          {/* Menu */}
+          <div className="flex items-center gap-4 text-white/70 hover:text-white transition-colors text-[11px] tracking-[0.2em] font-medium cursor-pointer">
+            <span>MENU</span>
+            <div className="flex flex-col gap-[5px] w-6">
+              <div className="w-full h-[1px] bg-current"></div>
+              <div className="w-full h-[1px] bg-current"></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Left Logo */}
+        <div className="absolute bottom-10 left-[6vw] pointer-events-auto cursor-pointer">
+          <div className="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-white font-bold relative hover:bg-white/5 transition-colors">
+            N<span className="text-[#F7B500] text-[12px] absolute translate-x-2 -translate-y-1.5">.</span>
+          </div>
         </div>
 
       </div>
