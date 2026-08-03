@@ -1,7 +1,9 @@
 export const topographicVertexShader = `
   varying vec2 vUv;
+  varying vec3 vPosition;
   void main() {
     vUv = uv;
+    vPosition = position;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   }
 `;
@@ -11,6 +13,7 @@ export const topographicFragmentShader = `
   uniform vec3 uColorBg;
   uniform vec3 uColorLine;
   varying vec2 vUv;
+  varying vec3 vPosition;
 
   // Optimized Simplex 2D noise
   vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
@@ -41,63 +44,41 @@ export const topographicFragmentShader = `
     return 130.0 * dot(m, g);
   }
 
-  // FBM
-  float fbm(vec2 x) {
-    float v = 0.0;
-    float a = 0.5;
-    vec2 shift = vec2(100.0);
-    mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.50));
-    // Reduced to 2 octaves for very smooth, minimal curves
-    for (int i = 0; i < 2; ++i) { 
-      v += a * snoise(x);
-      x = rot * x * 2.0 + shift;
-      a *= 0.5;
-    }
-    return v;
-  }
-
   void main() {
-    // Lower scale significantly for massive, sweeping contours
-    vec2 p = vUv * 0.15; 
+    // Use vPosition instead of vUv to ensure perfect aspect ratio (no stretching)
+    // Scale dictates the physical size of the blobs on screen
+    vec2 p = vPosition.xy * 0.15; 
     
-    // Add continuous directional scrolling (panning upwards)
-    // This gives the feeling of moving over a map rather than just breathing in place
-    p.y -= uTime * 0.02;
-    p.x -= uTime * 0.01;
+    // Add continuous directional scrolling (panning diagonally)
+    p.y += uTime * 0.03;
+    p.x += uTime * 0.015;
     
-    // Extremely slow breathing animation for the warping effect
-    float t = uTime * 0.008;  
+    // Very slow domain warping vectors
+    float warpTime = uTime * 0.01;
+    vec2 warp = vec2(
+      snoise(p * 0.4 + vec2(warpTime, 0.0)),
+      snoise(p * 0.4 + vec2(0.0, warpTime))
+    );
 
-    // Organic Domain Warping
-    vec2 q = vec2(0.);
-    q.x = fbm( p + vec2(t) );
-    q.y = fbm( p + vec2(1.0) );
+    // Single octave Simplex noise for perfectly smooth, large blobs and winding channels
+    // exactly matching the reference image pattern.
+    float noiseVal = snoise(p + warp * 0.6);
 
-    vec2 r = vec2(0.);
-    // Reduced the multiplier from 1.0 to 0.4 to reduce chaotic curves
-    r.x = fbm( p + 0.4*q + vec2(1.7,9.2)+ 0.15*t );
-    r.y = fbm( p + 0.4*q + vec2(8.3,2.8)+ 0.126*t );
-
-    // Reduced warp influence (0.5 instead of 1.0) for smoother lines
-    float f = fbm(p + 0.5*r);
-
-    // Number of contour lines mapped over the noise value (lower for fewer lines and massive spacing)
-    float lineVal = f * 3.0; 
+    // Number of contour lines mapped over the noise value (-1.0 to 1.0)
+    // 3.5 creates massive spacing exactly like the screenshot
+    float lineVal = noiseVal * 3.5; 
     
     // Distance from the nearest integer (contour center)
     float dist = abs(fract(lineVal) - 0.5); 
     
-    // fwidth calculates how much lineVal changes per pixel.
-    // We use it to ensure the line is exactly 1-1.5 pixels wide regardless of scaling.
+    // Hardware standard derivatives for perfect 1px line thickness at any scale
     float fw = fwidth(lineVal); 
     
-    // Sharp anti-aliasing: line is opaque near 0.0 distance, transparent outside width
-    // Multiplied by 0.7 to keep it thin and subtle
-    float line = smoothstep(fw * 0.7, 0.0, dist);
+    // Sharp anti-aliasing
+    float line = smoothstep(fw * 0.8, 0.0, dist);
     
-    // Mix the deep black background with the off-white line color
-    // We multiply 'line' by 0.3 for subtleness (so it isn't pure white/distracting)
-    vec3 col = mix(uColorBg, uColorLine, line * 0.3);
+    // Mix background and line color
+    vec3 col = mix(uColorBg, uColorLine, line * 0.35);
 
     gl_FragColor = vec4(col, 1.0);
   }
