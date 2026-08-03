@@ -2,46 +2,33 @@
 
 import { useRef, useMemo, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Group, Mesh, BoxGeometry, MeshPhysicalMaterial, Points, PointLight, LineBasicMaterial } from "three";
-import { Text, Edges } from "@react-three/drei";
+import { Group, Mesh, BoxGeometry, MeshPhysicalMaterial, Points, PointLight, MeshBasicMaterial } from "three";
+import { Text } from "@react-three/drei";
 import { globalScrollState } from "@/store/scrollState";
 
 export function HeroCube() {
   const groupRef = useRef<Group>(null);
-  
-  const coreRef = useRef<Mesh>(null);
-  const topPanelRef = useRef<Mesh>(null);
-  const bottomPanelRef = useRef<Mesh>(null);
-  const leftPanelRef = useRef<Mesh>(null);
-  const rightPanelRef = useRef<Mesh>(null);
-  
+  const topHalfRef = useRef<Mesh>(null);
+  const bottomHalfRef = useRef<Mesh>(null);
   const particlesRef = useRef<Points>(null);
   const coreLightRef = useRef<PointLight>(null);
+  const glowMatRef = useRef<MeshBasicMaterial>(null);
 
-  // Geometries for the 5 pieces
-  const coreGeo = useMemo(() => new BoxGeometry(1.9, 1.9, 1.9), []);
-  const topBottomGeo = useMemo(() => new BoxGeometry(2.1, 0.1, 2.1), []);
-  const leftRightGeo = useMemo(() => new BoxGeometry(0.1, 1.9, 2.1), []);
+  // Geometry
+  const halfGeo = useMemo(() => new BoxGeometry(2, 0.98, 2), []);
   
-  // Materials: Glossy dark glass/obsidian
-  const darkGlossMat = useMemo(() => new MeshPhysicalMaterial({
-    color: 0x050505,
-    roughness: 0.1,
-    metalness: 0.8,
-    clearcoat: 1.0,
-    clearcoatRoughness: 0.1
-  }), []);
+  // Materials
+  const faceMats = useMemo(() => [
+    new MeshPhysicalMaterial({color: 0xF7B500, roughness:0.2, metalness:0.3}), // Right - Yellow
+    new MeshPhysicalMaterial({color: 0xFF3B30, roughness:0.2, metalness:0.3}), // Left - Red
+    new MeshPhysicalMaterial({color: 0x111111, roughness:0.2, metalness:0.5}), // Top - Dark
+    new MeshPhysicalMaterial({color: 0x111111, roughness:0.2, metalness:0.5}), // Bottom - Dark
+    new MeshPhysicalMaterial({color: 0x000000, roughness:0.2, metalness:0.5}), // Front - Black
+    new MeshPhysicalMaterial({color: 0x222222, roughness:0.2, metalness:0.5})  // Back - Dark gray
+  ], []);
 
-  // Golden glowing edges
-  const goldEdgeMat = useMemo(() => new LineBasicMaterial({
-    color: 0xF7B500,
-    transparent: true,
-    opacity: 0.8,
-    linewidth: 2,
-  }), []);
-
-  // Particles (dust/sparks)
-  const particleCount = typeof window !== 'undefined' && window.innerWidth < 700 ? 150 : 400;
+  // Particles
+  const particleCount = typeof window !== 'undefined' && window.innerWidth < 700 ? 260 : 650;
   const positions = useMemo(() => {
     const pos = new Float32Array(particleCount * 3);
     for(let i = 0; i < particleCount; i++) {
@@ -80,14 +67,15 @@ export function HeroCube() {
     globalScrollState.currentProgress += (globalScrollState.targetProgress - globalScrollState.currentProgress) * 0.08;
     const p = globalScrollState.currentProgress;
     
-    // Cube X Position (Starts right, moves center)
+    // Cube X Position
+    // Starts at 1.7 (right side). Moves to 0 (center) between p=0.2 and p=0.3
     const moveCenterProgress = smooth(mapRange(p, 0.2, 0.3));
     const cubeX = 1.7 * (1 - moveCenterProgress);
 
-    // Open Amount (Splits open between p=0.65 and 0.9)
+    // Open Amount
+    // Splits open between p=0.65 and 0.9
     const openAmt = smooth(mapRange(p, 0.65, 0.9));
 
-    // Rotation
     autoRotY.current += 0.0032;
     const targetRotY = autoRotY.current + pointer.x * 0.5;
     const targetRotX = pointer.y * 0.3;
@@ -95,19 +83,22 @@ export function HeroCube() {
     groupRef.current.rotation.y += (targetRotY - groupRef.current.rotation.y) * 0.06;
     groupRef.current.rotation.x += (targetRotX - groupRef.current.rotation.x) * 0.06;
 
-    // Sync horizontal position
+    // Instantly sync horizontal position to the globally smoothed progress
     groupRef.current.position.x = cubeX;
 
-    // Explode the shell panels
-    const openDist = openAmt * 1.2;
-    if (topPanelRef.current) topPanelRef.current.position.y = 1.0 + openDist;
-    if (bottomPanelRef.current) bottomPanelRef.current.position.y = -1.0 - openDist;
-    if (leftPanelRef.current) leftPanelRef.current.position.x = -1.0 - openDist;
-    if (rightPanelRef.current) rightPanelRef.current.position.x = 1.0 + openDist;
+    // Split the cube
+    const openDist = openAmt * 0.9;
+    if (topHalfRef.current && bottomHalfRef.current) {
+      topHalfRef.current.position.y = 0.5 + openDist;
+      bottomHalfRef.current.position.y = -0.5 - openDist;
+    }
 
-    // Light up the core
     if (coreLightRef.current) {
-      coreLightRef.current.intensity = 1.0 + openAmt * 5.0;
+      coreLightRef.current.intensity = 2.0 + openAmt * 3.2;
+    }
+
+    if (glowMatRef.current) {
+      glowMatRef.current.opacity = openAmt * 0.5;
     }
 
     if (particlesRef.current) {
@@ -116,52 +107,54 @@ export function HeroCube() {
   });
 
   return (
-    <group>
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[5, 5, 5]} intensity={1.5} color="#FFFFFF" />
-      <directionalLight position={[-5, -5, -5]} intensity={0.5} color="#F7B500" />
-      
-      {/* Golden sparks/particles */}
+    <>
+      <ambientLight color={0x1a1408} intensity={1.2} />
+      <pointLight ref={coreLightRef} color={0xF7B500} intensity={2.4} distance={12} decay={2} position={[0,0,0]} />
+      <pointLight color={0xFF3B30} intensity={0.5} distance={14} position={[-4,-2,3]} />
+
       <points ref={particlesRef}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" count={particleCount} array={positions} itemSize={3} />
         </bufferGeometry>
-        <pointsMaterial color="#F7B500" size={0.03} transparent opacity={0.6} sizeAttenuation />
+        <pointsMaterial color={0xFAFAFA} size={0.018} transparent opacity={0.55} sizeAttenuation={true} />
       </points>
 
-      <group ref={groupRef} position={[1.7, 0, 2]}>
-        
-        {/* Inner Glowing Core */}
-        <mesh ref={coreRef} geometry={coreGeo} material={darkGlossMat}>
-          <Edges geometry={coreGeo} material={goldEdgeMat} />
+      <group ref={groupRef}>
+        {/* Top Half */}
+        <mesh ref={topHalfRef} geometry={halfGeo} material={faceMats} position={[0, 0.5, 0]}>
+          <lineSegments>
+            <edgesGeometry attach="geometry" args={[halfGeo]} />
+            <lineBasicMaterial attach="material" color={0xF7B500} transparent opacity={0.95} />
+          </lineSegments>
+          <lineSegments scale={1.06}>
+            <edgesGeometry attach="geometry" args={[halfGeo]} />
+            <lineBasicMaterial attach="material" color={0xF7B500} transparent opacity={0.25} />
+          </lineSegments>
           
-          <group position={[0, -0.05, 0.96]}>
-            <Text position={[0, 0.3, 0]} fontSize={0.3} color="#FFFFFF" fontWeight={700}>brand</Text>
-            <Text position={[0, 0.05, 0]} fontSize={0.3} color="#F7B500" fontWeight={700}>masala.</Text>
-            <Text position={[0, -0.25, 0]} fontSize={0.08} color="#A0A0A0" letterSpacing={0.1}>A BRAND CONSULTANCY FIRM</Text>
+          <group position={[0, -0.1, 1.01]}>
+            <Text position={[-0.55, 0, 0]} fontSize={0.28} color="#FFFFFF" fontWeight={700}>brand</Text>
+            <Text position={[0.55, 0, 0]} fontSize={0.28} color="#F7B500" fontWeight={700}>masala.</Text>
           </group>
         </mesh>
 
-        <pointLight ref={coreLightRef} color="#F7B500" intensity={1.0} distance={5} position={[0,0,1]} />
-
-        {/* Outer Shell Panels */}
-        <mesh ref={topPanelRef} geometry={topBottomGeo} material={darkGlossMat} position={[0, 1.0, 0]}>
-          <Edges geometry={topBottomGeo} material={goldEdgeMat} />
+        {/* Bottom Half */}
+        <mesh ref={bottomHalfRef} geometry={halfGeo} material={faceMats} position={[0, -0.5, 0]}>
+          <lineSegments>
+            <edgesGeometry attach="geometry" args={[halfGeo]} />
+            <lineBasicMaterial attach="material" color={0xF7B500} transparent opacity={0.95} />
+          </lineSegments>
+          <lineSegments scale={1.06}>
+            <edgesGeometry attach="geometry" args={[halfGeo]} />
+            <lineBasicMaterial attach="material" color={0xF7B500} transparent opacity={0.25} />
+          </lineSegments>
         </mesh>
 
-        <mesh ref={bottomPanelRef} geometry={topBottomGeo} material={darkGlossMat} position={[0, -1.0, 0]}>
-          <Edges geometry={topBottomGeo} material={goldEdgeMat} />
+        {/* Glow Plane */}
+        <mesh rotation={[-Math.PI/2, 0, 0]}>
+          <planeGeometry args={[1.9, 1.9]} />
+          <meshBasicMaterial ref={glowMatRef} color={0xF7B500} transparent opacity={0} />
         </mesh>
-
-        <mesh ref={leftPanelRef} geometry={leftRightGeo} material={darkGlossMat} position={[-1.0, 0, 0]}>
-          <Edges geometry={leftRightGeo} material={goldEdgeMat} />
-        </mesh>
-
-        <mesh ref={rightPanelRef} geometry={leftRightGeo} material={darkGlossMat} position={[1.0, 0, 0]}>
-          <Edges geometry={leftRightGeo} material={goldEdgeMat} />
-        </mesh>
-
       </group>
-    </group>
+    </>
   );
 }

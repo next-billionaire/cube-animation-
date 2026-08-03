@@ -3,15 +3,17 @@
 import { useEffect, useRef, useState } from "react";
 import { globalScrollState } from "@/store/scrollState";
 
+const goldColor = '#DCA92A';
+
 const callouts = [
-  {title1:'SOCIAL MEDIA', title2:'MARKETING', sub:'ENGAGE. INFLUENCE. GROW.', side:'left', top:16, color:'#00E5FF', icon:'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path><line x1="8" y1="12" x2="8.01" y2="12"></line><line x1="12" y1="12" x2="12.01" y2="12"></line><line x1="16" y1="12" x2="16.01" y2="12"></line>'},
-  {title1:'BRANDING', title2:'', sub:'DEFINE. DESIGN. DIFFERENTIATE.', side:'left', top:34, color:'#FFB300', icon:'<polygon points="2 22 22 22 18 11 12 16 6 11"></polygon><path d="M6 11l-4 6v5"></path><path d="M18 11l4 6v5"></path>'},
-  {title1:'DIGITAL', title2:'MARKETING', sub:'REACH. CONVERT. SCALE.', side:'left', top:54, color:'#FF00FF', icon:'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>'},
-  {title1:'PERFORMANCE', title2:'MARKETING', sub:'DATA-DRIVEN. ROI FOCUSED.', side:'left', top:74, color:'#00FFCC', icon:'<circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle>'},
-  {title1:'SEO', title2:'', sub:'RANK HIGHER. GET FOUND.', side:'right', top:16, color:'#39FF14', icon:'<circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><polyline points="8 12 10 10 12 12 14 8"></polyline>'},
-  {title1:'WEBSITE', title2:'DEVELOPMENT', sub:'FAST. RESPONSIVE. RESULTS.', side:'right', top:34, color:'#B700FF', icon:'<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><polyline points="8 13 6 15 8 17"></polyline><polyline points="16 13 18 15 16 17"></polyline><line x1="13" y1="13" x2="11" y2="17"></line>'},
-  {title1:'APP', title2:'DEVELOPMENT', sub:'INNOVATIVE. INTUITIVE. IMPACTFUL.', side:'right', top:54, color:'#FF8C00', icon:'<rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line>'},
-  {title1:'CONTENT', title2:'CREATION', sub:'CREATE. CONNECT. COMMUNICATE.', side:'right', top:74, color:'#FF0033', icon:'<path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>'}
+  {title1:'SOCIAL MEDIA', title2:'MARKETING', sub:'ENGAGE. INFLUENCE. GROW.', side:'left', top:16, color:goldColor, icon:'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>'},
+  {title1:'BRANDING &', title2:'IDENTITY', sub:'DEFINE. DESIGN. DIFFERENTIATE.', side:'left', top:34, color:goldColor, icon:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>'},
+  {title1:'DIGITAL', title2:'MARKETING', sub:'REACH. CONVERT. SCALE.', side:'left', top:54, color:goldColor, icon:'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>'},
+  {title1:'PERFORMANCE', title2:'MARKETING', sub:'DATA-DRIVEN. ROI FOCUSED.', side:'left', top:74, color:goldColor, icon:'<circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle>'},
+  {title1:'SEO', title2:'SERVICES', sub:'RANK HIGHER. GET FOUND.', side:'right', top:16, color:goldColor, icon:'<circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>'},
+  {title1:'WEBSITE', title2:'DEVELOPMENT', sub:'FAST. RESPONSIVE. RESULTS.', side:'right', top:34, color:goldColor, icon:'<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><polyline points="8 13 6 15 8 17"></polyline><polyline points="16 13 18 15 16 17"></polyline>'},
+  {title1:'APP', title2:'DEVELOPMENT', sub:'INNOVATIVE. INTUITIVE. IMPACTFUL.', side:'right', top:54, color:goldColor, icon:'<rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line>'},
+  {title1:'CONTENT', title2:'CREATION', sub:'CREATE. CONNECT. COMMUNICATE.', side:'right', top:74, color:goldColor, icon:'<path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>'}
 ];
 
 export function HeroSection() {
@@ -119,6 +121,7 @@ export function HeroSection() {
               const t = smooth(mapRange(openAmt, start, start + 0.28));
               
               const isLeft = def.side === 'left';
+              // Convert vh to px for math
               const yShiftBase = 50 - def.top; 
               
               return (
@@ -127,29 +130,26 @@ export function HeroSection() {
                   className="absolute flex flex-col"
                   style={{
                     top: `${def.top}%`,
-                    left: isLeft ? '6vw' : 'auto',
-                    right: !isLeft ? '6vw' : 'auto',
+                    left: isLeft ? '8vw' : 'auto',
+                    right: !isLeft ? '8vw' : 'auto',
                     opacity: t,
                     // Explode OUT from the center box
                     transform: `translate(${isLeft ? 35 * (1-t) : -35 * (1-t)}vw, ${(50 - def.top) * (1-t)}vh) scale(${0.3 + 0.7*t})`
                   }}
                 >
-                  <div className={`flex items-center gap-6 ${!isLeft ? 'flex-row-reverse text-right' : ''}`}>
-                    {/* Icon with faint border */}
-                    <div className="flex items-center justify-center shrink-0 w-12 h-12 rounded-[14px] border border-white/10 bg-white/[0.02]">
+                  <div className={`flex items-center gap-5 ${!isLeft ? 'flex-row-reverse text-right' : ''}`}>
+                    <div className="flex items-center justify-center shrink-0 w-[42px] h-[42px] rounded-full border border-white/10 bg-black/40 backdrop-blur-sm">
                       <svg 
-                        width="20" height="20" viewBox="0 0 24 24" fill="none" 
-                        stroke="#F7B500" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" 
+                        width="18" height="18" viewBox="0 0 24 24" fill="none" 
+                        stroke={def.color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" 
                         dangerouslySetInnerHTML={{ __html: def.icon }}
                       />
                     </div>
-                    {/* Typography */}
                     <div className="flex flex-col gap-1">
-                      <div className="text-[17px] font-light tracking-wide uppercase whitespace-nowrap text-white">
-                        {def.title1} <br/>
-                        <span className="text-[#F7B500]">{def.title2}</span>
+                      <div className="text-[17px] font-space-grotesk tracking-wide uppercase whitespace-nowrap leading-tight">
+                        <span className="text-white/90 font-light">{def.title1}</span> <span className="font-normal" style={{ color: def.color }}>{def.title2}</span>
                       </div>
-                      <div className="text-[9px] text-neutral-500 whitespace-nowrap font-medium tracking-widest uppercase mt-1">
+                      <div className="text-[9px] text-neutral-500 whitespace-nowrap font-medium tracking-[0.1em] uppercase">
                         {def.sub}
                       </div>
                     </div>
@@ -160,42 +160,10 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Scroll Hint (Bottom Center) */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[11px] tracking-[.25em] uppercase text-neutral-400 flex flex-col items-center gap-4">
-          <span>SCROLL</span>
-          <div className="w-[1px] h-12 bg-gradient-to-b from-[#F7B500]/60 to-transparent"></div>
-        </div>
-
-        {/* Header Overlay */}
-        <div className="absolute top-0 left-0 w-full px-[6vw] py-10 flex items-start justify-between pointer-events-auto">
-          {/* Logo */}
-          <div className="flex flex-col text-white font-space-grotesk font-bold tracking-tighter text-[22px] leading-[0.9]">
-            <span>BRAND</span>
-            <span className="text-[#F7B500]">MASALA.</span>
-          </div>
-
-          {/* ESTD Pill */}
-          <div className="absolute left-1/2 -translate-x-1/2 top-10">
-            <div className="px-5 py-2 border border-[#F7B500]/20 rounded-full text-[10px] tracking-[0.2em] text-[#F7B500] uppercase font-medium">
-              Estd in 2024
-            </div>
-          </div>
-
-          {/* Menu */}
-          <div className="flex items-center gap-4 text-white/70 hover:text-white transition-colors text-[11px] tracking-[0.2em] font-medium cursor-pointer">
-            <span>MENU</span>
-            <div className="flex flex-col gap-[5px] w-6">
-              <div className="w-full h-[1px] bg-current"></div>
-              <div className="w-full h-[1px] bg-current"></div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Left Logo */}
-        <div className="absolute bottom-10 left-[6vw] pointer-events-auto cursor-pointer">
-          <div className="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-white font-bold relative hover:bg-white/5 transition-colors">
-            N<span className="text-[#F7B500] text-[12px] absolute translate-x-2 -translate-y-1.5">.</span>
-          </div>
+        {/* Scroll Hint */}
+        <div className="absolute bottom-9 left-1/2 -translate-x-1/2 text-[10px] tracking-[.25em] uppercase text-neutral-500 flex flex-col items-center gap-2">
+          <span>Scroll</span>
+          <div className="w-[1px] h-9 bg-gradient-to-b from-[#F7B500] to-transparent opacity-50 animate-pulse"></div>
         </div>
 
       </div>
