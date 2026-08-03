@@ -44,41 +44,56 @@ export const topographicFragmentShader = `
     return 130.0 * dot(m, g);
   }
 
+  // FBM for Terrain Map Detail
+  float fbm(vec2 x) {
+    float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    // Rotate to reduce axial bias
+    mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.50));
+    // 4 octaves gives that intricate 4K terrain detail
+    for (int i = 0; i < 4; ++i) { 
+      v += a * snoise(x);
+      x = rot * x * 2.0 + shift;
+      a *= 0.5;
+    }
+    return v;
+  }
+
   void main() {
-    // Use vPosition instead of vUv to ensure perfect aspect ratio (no stretching)
-    // Scale dictates the physical size of the blobs on screen
-    vec2 p = vPosition.xy * 0.15; 
+    // Use vPosition to ensure perfect aspect ratio
+    // Scale dictates the physical size of the terrain on screen
+    vec2 p = vPosition.xy * 0.3; 
     
-    // Add continuous directional scrolling (panning diagonally)
-    p.y += uTime * 0.03;
-    p.x += uTime * 0.015;
+    // Smooth, seamless panning motion
+    p.y -= uTime * 0.015;
+    p.x -= uTime * 0.005;
     
-    // Very slow domain warping vectors
-    float warpTime = uTime * 0.01;
+    // Very slow domain warping vectors to create organic "motion"
+    float warpTime = uTime * 0.008;
     vec2 warp = vec2(
-      snoise(p * 0.4 + vec2(warpTime, 0.0)),
-      snoise(p * 0.4 + vec2(0.0, warpTime))
+      fbm(p * 0.5 + vec2(warpTime, 0.0)),
+      fbm(p * 0.5 + vec2(0.0, warpTime))
     );
 
-    // Single octave Simplex noise for perfectly smooth, large blobs and winding channels
-    // exactly matching the reference image pattern.
-    float noiseVal = snoise(p + warp * 0.6);
+    // Add turbulence for terrain-like ridges
+    float noiseVal = fbm(p + warp * 1.5);
 
-    // Number of contour lines mapped over the noise value (-1.0 to 1.0)
-    // 3.5 creates massive spacing exactly like the screenshot
-    float lineVal = noiseVal * 3.5; 
+    // Number of contour lines mapped over the noise value
+    // 6.0 provides a dense, intricate terrain map feel
+    float lineVal = noiseVal * 6.0; 
     
     // Distance from the nearest integer (contour center)
     float dist = abs(fract(lineVal) - 0.5); 
     
-    // Hardware standard derivatives for perfect 1px line thickness at any scale
+    // Hardware standard derivatives for perfect 1px line thickness at 4K resolution
     float fw = fwidth(lineVal); 
     
     // Sharp anti-aliasing
     float line = smoothstep(fw * 0.8, 0.0, dist);
     
     // Mix background and line color
-    vec3 col = mix(uColorBg, uColorLine, line * 0.35);
+    vec3 col = mix(uColorBg, uColorLine, line * 0.5);
 
     gl_FragColor = vec4(col, 1.0);
   }
