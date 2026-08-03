@@ -37,26 +37,27 @@ export function HeroSection() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Easing and mapping functions identical to HTML reference
+  // Easing and mapping functions
   const smooth = (t: number) => t * t * (3 - 2 * t);
   const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
   const mapRange = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
 
   // --- Phase 1: Hero ---
-  const heroT = smooth(mapRange(p, 0, 0.30));
-  const heroOutT = smooth(mapRange(p, 0.24, 0.34));
-  const heroOpacity = heroT * (1 - heroOutT);
-  const heroTransform = `translateX(${-70 * (1 - heroT)}px)`;
+  // Starts fully visible, fades out as you scroll down
+  const heroFadeOut = smooth(mapRange(p, 0.2, 0.3));
+  const heroOpacity = 1 - heroFadeOut;
+  const heroTransform = `translateX(${-70 * heroFadeOut}px)`;
 
   // --- Phase 2: Statement ---
-  const stIn = smooth(mapRange(p, 0.30, 0.42));
-  const stOut = smooth(mapRange(p, 0.56, 0.66));
+  // Fades in after Hero, then fades out before Services
+  const stIn = smooth(mapRange(p, 0.3, 0.4));
+  const stOut = smooth(mapRange(p, 0.55, 0.65));
   const stOpacity = stIn * (1 - stOut);
   const stTransform = `translateY(${40 * (1 - stIn)}px)`;
   const badgeTransform = `translateY(${-10 * (1 - stIn)}px)`;
 
   // --- Phase 3: Services / Open Cube ---
-  const openAmt = smooth(mapRange(p, 0.66, 1.0));
+  const openAmt = smooth(mapRange(p, 0.65, 0.9));
 
   return (
     <section ref={containerRef} className="relative w-full z-10" style={{ height: "300vh" }}>

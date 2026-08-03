@@ -66,22 +66,14 @@ export function HeroCube() {
     // Read global state (0 to 1)
     const p = globalScrollState.heroProgress;
     
-    // Calculate animation variables exactly like the HTML reference
-    const stIn = smooth(mapRange(p, 0.30, 0.42));
-    const heroT = smooth(mapRange(p, 0, 0.30));
-    
     // Cube X Position
-    let cubeX = 0;
-    if(p > 0.66){ 
-      cubeX = 0; 
-    } else if (p > 0.30){ 
-      cubeX = 1.7 * (1 - stIn); 
-    } else { 
-      cubeX = 1.7 * heroT; 
-    }
+    // Starts at 1.7 (right side). Moves to 0 (center) between p=0.2 and p=0.3
+    const moveCenterProgress = smooth(mapRange(p, 0.2, 0.3));
+    const cubeX = 1.7 * (1 - moveCenterProgress);
 
     // Open Amount
-    const openAmt = smooth(mapRange(p, 0.66, 1.0));
+    // Splits open between p=0.65 and 0.9
+    const openAmt = smooth(mapRange(p, 0.65, 0.9));
 
     autoRotY.current += 0.0032;
     const targetRotY = autoRotY.current + pointer.x * 0.5;
