@@ -2,7 +2,7 @@
 
 import { useRef, useMemo, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Group, Mesh, BoxGeometry, MeshPhysicalMaterial, Points, PointLight, MeshBasicMaterial } from "three";
+import { Group, Mesh, BoxGeometry, MeshPhysicalMaterial, MeshStandardMaterial, Points, PointLight, MeshBasicMaterial } from "three";
 import { Text } from "@react-three/drei";
 import { globalScrollState } from "@/store/scrollState";
 
