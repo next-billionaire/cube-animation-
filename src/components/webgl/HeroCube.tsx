@@ -85,11 +85,11 @@ export function HeroCube() {
 
     // Vertical Position (Scroll away when past the hero section)
     // If p > 1, the user is scrolling past the 300vh container.
-    // p increases by 0.5 for every 100vh scrolled.
-    // Camera FOV 50 at Z=5 has a visible height of 4.66 units.
-    // To scroll exactly 100vh in world space: 4.66 / 0.5 = 9.32
+    // p increases by 1.0 per 200vh, so 0.5 per 100vh (1 viewport height).
+    // The exact world distance for 1 viewport height is state.viewport.height.
+    // So the cube should move up by: (p - 1.0) * 2 * state.viewport.height
     if (p > 1.0) {
-      groupRef.current.position.y = (p - 1.0) * 9.32;
+      groupRef.current.position.y = (p - 1.0) * 2 * state.viewport.height;
     } else {
       groupRef.current.position.y = 0;
     }
