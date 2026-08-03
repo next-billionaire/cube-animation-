@@ -81,15 +81,16 @@ export const topographicFragmentShader = `
   }
 
   void main() {
-    // Zoomed in scale
-    vec2 p = vPosition.xy * 0.4; 
+    // Zoomed out scale to reveal more distinct peaks/valleys (producing circles)
+    vec2 p = vPosition.xy * 1.0; 
     
-    // Evaluate 3D noise across the 2D plane, using time as the Z-axis!
-    // This creates true organic morphing/breathing in place, completely eliminating the "scrolling" effect.
-    float noiseVal = snoise(vec3(p.x, p.y, uTime * 0.06));
+    // Evaluate 3D noise across the 2D plane, using time as the Z-axis
+    // Slowed down morphing slightly since we are zoomed out
+    float noiseVal = snoise(vec3(p.x, p.y, uTime * 0.04));
 
-    // Calculate contour lines
-    float lineVal = noiseVal * 4.0; 
+    // Increased multiplier significantly (12.0) to pack more contour rings together,
+    // which effectively reduces the area of the innermost circles at the peaks.
+    float lineVal = noiseVal * 12.0; 
     
     // Distance from the nearest integer (contour center)
     float dist = abs(fract(lineVal) - 0.5); 
