@@ -97,18 +97,15 @@ export function HeroSection() {
         </div>
 
         {/* Phase 2: Statement */}
-        <div className="absolute inset-0 flex items-center justify-center text-center">
-          <span 
-            className="absolute top-[14%] left-[8vw] text-[11px] tracking-[.22em] uppercase text-[#F7B500] border border-[#F7B500]/40 py-2 px-4 rounded-full"
-            style={{ opacity: stOpacity, transform: badgeTransform }}
-          >
-            Estd in 2024
-          </span>
+        <div className="absolute inset-0 flex items-center justify-start pl-[8vw]">
           <div style={{ opacity: stOpacity, transform: stTransform }}>
-            <h2 className="font-space-grotesk font-light text-[clamp(28px,5.6vw,66px)] leading-[1.16] max-w-[900px] text-white">
+            <span className="inline-block mb-6 text-[11px] tracking-[.22em] uppercase text-[#F7B500] border border-[#F7B500]/40 py-2 px-4 rounded-full">
+              Estd in 2024
+            </span>
+            <h2 className="font-space-grotesk font-light text-[clamp(28px,5.6vw,66px)] leading-[1.16] max-w-[640px] text-white">
               To build brands<br/>that <em className="italic text-[#F7B500]">matter</em>.
             </h2>
-            <p className="mt-6 mx-auto text-[15px] leading-[1.6] text-neutral-400 max-w-[420px] font-light">
+            <p className="mt-6 text-[15px] leading-[1.6] text-neutral-400 max-w-[420px] font-light">
               We boost your brand by
             </p>
           </div>
