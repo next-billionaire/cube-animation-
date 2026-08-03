@@ -1,12 +1,14 @@
 "use client";
 
 import { useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import "./TopographicMaterial"; // Ensure it's imported and registered
 
 export function Background() {
   const materialRef = useRef<any>(null);
+
+  const { viewport } = useThree();
 
   useFrame((state) => {
     if (materialRef.current) {
@@ -16,7 +18,7 @@ export function Background() {
 
   return (
     <mesh>
-      <planeGeometry args={[2, 2]} />
+      <planeGeometry args={[viewport.width, viewport.height]} />
       <topographicMaterial 
         ref={materialRef} 
         depthWrite={false}
