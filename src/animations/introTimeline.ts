@@ -5,6 +5,9 @@ export const createIntroTimeline = (onComplete: () => void) => {
     onComplete,
     defaults: { ease: "power4.out" }
   });
+  
+  // Increase overall speed
+  tl.timeScale(1.5);
 
   // Initial states
   tl.set("#main-content", { y: "100vh", opacity: 0 });
