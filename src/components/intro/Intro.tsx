@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useIntro } from "@/hooks/useIntro";
-import { CinematicOverlay } from "@/components/effects/CinematicOverlay";
 import { LogoReveal } from "./LogoReveal";
 import { createIntroTimeline } from "@/animations/introTimeline";
 
@@ -40,7 +39,6 @@ export function Intro() {
 
   return (
     <div className="intro-wrapper fixed inset-0 z-50 flex items-center justify-center overflow-hidden">
-      <CinematicOverlay />
       <LogoReveal />
     </div>
   );
