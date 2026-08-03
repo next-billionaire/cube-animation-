@@ -21,7 +21,7 @@ export default function Home() {
         </div>
 
         {/* Third Section */}
-        <div id="section2" className="relative w-full min-h-screen bg-[#111] z-20 flex flex-col items-center justify-center p-8 text-white border-t border-white/10">
+        <div id="section2" className="relative w-full min-h-screen bg-transparent z-20 flex flex-col items-center justify-center p-8 text-white border-t border-white/10">
           <h2 className="font-space-grotesk text-4xl md:text-6xl font-light tracking-tight mb-4 text-[#DCA92A]">
             Section 2
           </h2>
