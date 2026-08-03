@@ -142,11 +142,6 @@ export function HeroCube() {
             <edgesGeometry attach="geometry" args={[halfGeo]} />
             <lineBasicMaterial attach="material" color={0xF7B500} transparent opacity={0.25} />
           </lineSegments>
-          
-          <group position={[0, -0.1, 1.01]}>
-            <Text position={[-0.55, 0, 0]} fontSize={0.28} color="#FFFFFF" fontWeight={700}>brand</Text>
-            <Text position={[0.55, 0, 0]} fontSize={0.28} color="#F7B500" fontWeight={700}>masala.</Text>
-          </group>
         </mesh>
 
         {/* Bottom Half */}
