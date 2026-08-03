@@ -8,16 +8,14 @@ export function GlobalCanvas() {
   return (
     <div className="fixed inset-0 w-full h-full -z-10 pointer-events-none">
       <Canvas
-        camera={{ position: [0, 0, 5], fov: 45 }}
+        camera={{ position: [0, 0, 7], fov: 42 }}
         gl={{
           antialias: true,
           powerPreference: "high-performance",
-          alpha: false,
+          alpha: true,
         }}
         dpr={[1, 2]}
       >
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[5, 5, 5]} intensity={1} />
         <Background />
         <HeroCube />
       </Canvas>
