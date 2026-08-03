@@ -18,14 +18,17 @@ export function HeroCube() {
   const halfGeo = useMemo(() => new BoxGeometry(2, 0.98, 2), []);
   
   // Materials
-  const faceMats = useMemo(() => [
-    new MeshPhysicalMaterial({color: 0xF7B500, roughness:0.2, metalness:0.3}), // Right - Yellow
-    new MeshPhysicalMaterial({color: 0xFF3B30, roughness:0.2, metalness:0.3}), // Left - Red
-    new MeshPhysicalMaterial({color: 0x111111, roughness:0.2, metalness:0.5}), // Top - Dark
-    new MeshPhysicalMaterial({color: 0x111111, roughness:0.2, metalness:0.5}), // Bottom - Dark
-    new MeshPhysicalMaterial({color: 0x000000, roughness:0.2, metalness:0.5}), // Front - Black
-    new MeshPhysicalMaterial({color: 0x222222, roughness:0.2, metalness:0.5})  // Back - Dark gray
-  ], []);
+  const faceMats = useMemo(() => {
+    // Create a premium, solid white material with a slight glossy clearcoat
+    const whiteMat = new MeshPhysicalMaterial({
+      color: 0xFFFFFF, 
+      roughness: 0.15, 
+      metalness: 0.1,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1
+    });
+    return [whiteMat, whiteMat, whiteMat, whiteMat, whiteMat, whiteMat];
+  }, []);
 
   // Particles
   const particleCount = typeof window !== 'undefined' && window.innerWidth < 700 ? 260 : 650;
