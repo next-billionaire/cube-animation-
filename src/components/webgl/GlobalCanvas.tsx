@@ -6,43 +6,20 @@ import { HeroCube } from "./HeroCube";
 
 export function GlobalCanvas() {
   return (
-    <div 
-      id="canvas-container"
-      className="fixed inset-0 w-full h-full -z-10"
-      style={{ pointerEvents: "none" }} // Container ignores pointer events so you can scroll
-    >
+    <div className="fixed inset-0 w-full h-full -z-10 pointer-events-none">
       <Canvas
-        camera={{ position: [0, 0, 8], fov: 45 }}
+        camera={{ position: [0, 0, 5], fov: 45 }}
         gl={{
-          antialias: true, // Need anti-aliasing for the 3D cube edges
+          antialias: true,
           powerPreference: "high-performance",
-          alpha: true,
+          alpha: false,
         }}
         dpr={[1, 2]}
-        // Route events from the document body to the canvas for 3D interactions
-        // while the canvas itself stays pointer-events: none
-        eventSource={typeof document !== "undefined" ? document.body : undefined}
-        eventPrefix="client"
       >
-        {/* Studio Lighting */}
         <ambientLight intensity={0.5} />
-        <spotLight 
-          position={[10, 10, 10]} 
-          angle={0.15} 
-          penumbra={1} 
-          intensity={1} 
-          castShadow 
-        />
-        <spotLight 
-          position={[-10, -10, -10]} 
-          angle={0.15} 
-          penumbra={1} 
-          intensity={0.5} 
-        />
-        <directionalLight position={[0, 0, 5]} intensity={0.5} />
-
-        <HeroCube />
+        <directionalLight position={[5, 5, 5]} intensity={1} />
         <Background />
+        <HeroCube />
       </Canvas>
     </div>
   );
