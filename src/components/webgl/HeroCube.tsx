@@ -19,13 +19,11 @@ export function HeroCube() {
   
   // Materials
   const faceMats = useMemo(() => {
-    // Create a premium, solid white material with a slight glossy clearcoat
-    const whiteMat = new MeshPhysicalMaterial({
+    // Create a solid, opaque white material
+    const whiteMat = new MeshStandardMaterial({
       color: 0xFFFFFF, 
-      roughness: 0.15, 
+      roughness: 0.3, 
       metalness: 0.1,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.1
     });
     return [whiteMat, whiteMat, whiteMat, whiteMat, whiteMat, whiteMat];
   }, []);
@@ -122,11 +120,12 @@ export function HeroCube() {
 
   return (
     <>
-      <ambientLight color={0x1a1408} intensity={1.2} />
+      <ambientLight color={0xffffff} intensity={0.7} />
+      <directionalLight position={[5, 5, 5]} intensity={1.5} color={0xffffff} />
+      <directionalLight position={[-5, -5, -5]} intensity={0.5} color={0xffffff} />
       
       <group ref={groupRef}>
         <pointLight ref={coreLightRef} color={0xF7B500} intensity={2.4} distance={12} decay={2} position={[0,0,0]} />
-        <pointLight color={0xFF3B30} intensity={0.5} distance={14} position={[-4,-2,3]} />
 
         <points ref={particlesRef}>
           <bufferGeometry>
@@ -136,28 +135,10 @@ export function HeroCube() {
         </points>
 
         {/* Top Half */}
-        <mesh ref={topHalfRef} geometry={halfGeo} material={faceMats} position={[0, 0.5, 0]}>
-          <lineSegments>
-            <edgesGeometry attach="geometry" args={[halfGeo]} />
-            <lineBasicMaterial attach="material" color={0xF7B500} transparent opacity={0.95} />
-          </lineSegments>
-          <lineSegments scale={1.01}>
-            <edgesGeometry attach="geometry" args={[halfGeo]} />
-            <lineBasicMaterial attach="material" color={0xF7B500} transparent opacity={0.25} />
-          </lineSegments>
-        </mesh>
+        <mesh ref={topHalfRef} geometry={halfGeo} material={faceMats} position={[0, 0.5, 0]} />
 
         {/* Bottom Half */}
-        <mesh ref={bottomHalfRef} geometry={halfGeo} material={faceMats} position={[0, -0.5, 0]}>
-          <lineSegments>
-            <edgesGeometry attach="geometry" args={[halfGeo]} />
-            <lineBasicMaterial attach="material" color={0xF7B500} transparent opacity={0.95} />
-          </lineSegments>
-          <lineSegments scale={1.01}>
-            <edgesGeometry attach="geometry" args={[halfGeo]} />
-            <lineBasicMaterial attach="material" color={0xF7B500} transparent opacity={0.25} />
-          </lineSegments>
-        </mesh>
+        <mesh ref={bottomHalfRef} geometry={halfGeo} material={faceMats} position={[0, -0.5, 0]} />
 
         {/* Glow Plane */}
         <mesh rotation={[-Math.PI/2, 0, 0]}>
