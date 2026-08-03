@@ -27,7 +27,8 @@ export function HeroSection() {
       const start = rect.top; 
       const distance = rect.height - window.innerHeight;
       const raw = -start / distance;
-      const progress = Math.max(0, Math.min(1, raw));
+      // Do not clamp the maximum to 1, so we know when the user has scrolled past the section
+      const progress = Math.max(0, raw);
       
       globalScrollState.targetProgress = progress;
     };

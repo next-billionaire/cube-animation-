@@ -83,6 +83,17 @@ export function HeroCube() {
     groupRef.current.rotation.y += (targetRotY - groupRef.current.rotation.y) * 0.06;
     groupRef.current.rotation.x += (targetRotX - groupRef.current.rotation.x) * 0.06;
 
+    // Vertical Position (Scroll away when past the hero section)
+    // If p > 1, the user is scrolling past the 300vh container.
+    // p increases by 0.5 for every 100vh scrolled.
+    // Camera FOV 50 at Z=5 has a visible height of 4.66 units.
+    // To scroll exactly 100vh in world space: 4.66 / 0.5 = 9.32
+    if (p > 1.0) {
+      groupRef.current.position.y = (p - 1.0) * 9.32;
+    } else {
+      groupRef.current.position.y = 0;
+    }
+
     // Instantly sync horizontal position to the globally smoothed progress
     groupRef.current.position.x = cubeX;
 
@@ -109,17 +120,18 @@ export function HeroCube() {
   return (
     <>
       <ambientLight color={0x1a1408} intensity={1.2} />
-      <pointLight ref={coreLightRef} color={0xF7B500} intensity={2.4} distance={12} decay={2} position={[0,0,0]} />
-      <pointLight color={0xFF3B30} intensity={0.5} distance={14} position={[-4,-2,3]} />
-
-      <points ref={particlesRef}>
-        <bufferGeometry>
-          <bufferAttribute attach="attributes-position" count={particleCount} array={positions} itemSize={3} />
-        </bufferGeometry>
-        <pointsMaterial color={0xFAFAFA} size={0.018} transparent opacity={0.55} sizeAttenuation={true} />
-      </points>
-
+      
       <group ref={groupRef}>
+        <pointLight ref={coreLightRef} color={0xF7B500} intensity={2.4} distance={12} decay={2} position={[0,0,0]} />
+        <pointLight color={0xFF3B30} intensity={0.5} distance={14} position={[-4,-2,3]} />
+
+        <points ref={particlesRef}>
+          <bufferGeometry>
+            <bufferAttribute attach="attributes-position" count={particleCount} array={positions} itemSize={3} />
+          </bufferGeometry>
+          <pointsMaterial color={0xFAFAFA} size={0.018} transparent opacity={0.55} sizeAttenuation={true} />
+        </points>
+
         {/* Top Half */}
         <mesh ref={topHalfRef} geometry={halfGeo} material={faceMats} position={[0, 0.5, 0]}>
           <lineSegments>
