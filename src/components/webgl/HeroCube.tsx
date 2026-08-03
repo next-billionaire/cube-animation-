@@ -4,6 +4,7 @@ import { useRef, useMemo, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Group, Mesh, BoxGeometry, MeshPhysicalMaterial, Points, PointLight, MeshBasicMaterial } from "three";
 import { Text } from "@react-three/drei";
+import { globalScrollState } from "@/store/scrollState";
 
 export function HeroCube() {
   const groupRef = useRef<Group>(null);
@@ -38,9 +39,8 @@ export function HeroCube() {
     return pos;
   }, [particleCount]);
 
-  // State
+  // Pointer State
   const [pointer, setPointer] = useState({ x: 0, y: 0 });
-  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -53,24 +53,35 @@ export function HeroCube() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      // Map scroll progress (0 to 1) over the first viewport height
-      const maxScroll = window.innerHeight * 0.8; 
-      const rawProgress = Math.min(Math.max(window.scrollY / maxScroll, 0), 1);
-      // Smooth step
-      const smooth = rawProgress * rawProgress * (3 - 2 * rawProgress);
-      setScrollProgress(smooth);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   const autoRotY = useRef(0);
+
+  // Helper for smooth easing
+  const smooth = (t: number) => t * t * (3 - 2 * t);
+  const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+  const mapRange = (v: number, a: number, b: number) => clamp01((v - a) / (b - a));
 
   useFrame((state, delta) => {
     if (!groupRef.current) return;
+
+    // Read global state (0 to 1)
+    const p = globalScrollState.heroProgress;
+    
+    // Calculate animation variables exactly like the HTML reference
+    const stIn = smooth(mapRange(p, 0.30, 0.42));
+    const heroT = smooth(mapRange(p, 0, 0.30));
+    
+    // Cube X Position
+    let cubeX = 0;
+    if(p > 0.66){ 
+      cubeX = 0; 
+    } else if (p > 0.30){ 
+      cubeX = 1.7 * (1 - stIn); 
+    } else { 
+      cubeX = 1.7 * heroT; 
+    }
+
+    // Open Amount
+    const openAmt = smooth(mapRange(p, 0.66, 1.0));
 
     autoRotY.current += 0.0032;
     const targetRotY = autoRotY.current + pointer.x * 0.5;
@@ -79,24 +90,22 @@ export function HeroCube() {
     groupRef.current.rotation.y += (targetRotY - groupRef.current.rotation.y) * 0.06;
     groupRef.current.rotation.x += (targetRotX - groupRef.current.rotation.x) * 0.06;
 
-    // Shift cube horizontally on scroll
-    const cubeX = scrollProgress * 1.7;
+    // Shift cube horizontally
     groupRef.current.position.x += (cubeX - groupRef.current.position.x) * 0.09;
 
     // Split the cube
-    const openDist = scrollProgress * 0.9;
-    
+    const openDist = openAmt * 0.9;
     if (topHalfRef.current && bottomHalfRef.current) {
       topHalfRef.current.position.y = 0.5 + openDist;
       bottomHalfRef.current.position.y = -0.5 - openDist;
     }
 
     if (coreLightRef.current) {
-      coreLightRef.current.intensity = 2.0 + scrollProgress * 3.2;
+      coreLightRef.current.intensity = 2.0 + openAmt * 3.2;
     }
 
     if (glowMatRef.current) {
-      glowMatRef.current.opacity = scrollProgress * 0.5;
+      glowMatRef.current.opacity = openAmt * 0.5;
     }
 
     if (particlesRef.current) {
@@ -130,8 +139,8 @@ export function HeroCube() {
           </lineSegments>
           
           <group position={[0, -0.1, 1.01]}>
-            <Text position={[-0.55, 0, 0]} fontSize={0.28} color="#FFFFFF" font="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2" fontWeight={700}>brand</Text>
-            <Text position={[0.55, 0, 0]} fontSize={0.28} color="#F7B500" font="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2" fontWeight={700}>masala.</Text>
+            <Text position={[-0.55, 0, 0]} fontSize={0.28} color="#FFFFFF" fontWeight={700}>brand</Text>
+            <Text position={[0.55, 0, 0]} fontSize={0.28} color="#F7B500" fontWeight={700}>masala.</Text>
           </group>
         </mesh>
 
