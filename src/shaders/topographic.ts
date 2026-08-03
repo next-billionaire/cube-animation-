@@ -56,8 +56,8 @@ export const topographicFragmentShader = `
   }
 
   void main() {
-    // Keep scale high enough to see contours but low enough for elegance
-    vec2 p = vUv * 2.5; 
+    // Lower scale for wider, smoother contours like Lando Norris
+    vec2 p = vUv * 0.9; 
     
     // Extremely slow breathing animation
     float t = uTime * 0.015; 
@@ -73,9 +73,8 @@ export const topographicFragmentShader = `
 
     float f = fbm(p + r);
 
-    // Create ultra-sharp, anti-aliased contour lines using standard derivatives
-    // Number of contour lines mapped over the noise value
-    float lineVal = f * 12.0; 
+    // Number of contour lines mapped over the noise value (lower for fewer lines)
+    float lineVal = f * 8.0; 
     
     // Distance from the nearest integer (contour center)
     float dist = abs(fract(lineVal) - 0.5); 
