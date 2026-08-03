@@ -46,8 +46,8 @@ export const topographicFragmentShader = `
 
   void main() {
     // Use vPosition instead of vUv to ensure perfect aspect ratio (no stretching)
-    // Increased scale to 0.8 to zoom out, showing more islands/blobs like the screenshot
-    vec2 p = vPosition.xy * 0.8; 
+    // Decreased scale to 0.4 to zoom back in
+    vec2 p = vPosition.xy * 0.4; 
     
     // Add continuous directional scrolling (panning diagonally)
     p.y += uTime * 0.05;
@@ -63,9 +63,8 @@ export const topographicFragmentShader = `
     // Single octave Simplex noise for perfectly smooth, large blobs and winding channels
     float noiseVal = snoise(p + warp * 0.6);
 
-    // Increased multiplier to 8.0 to get more concentric contour rings per peak
-    // This perfectly matches the line density in the screenshot
-    float lineVal = noiseVal * 8.0; 
+    // Decreased multiplier to 4.0 to significantly reduce the number of lines
+    float lineVal = noiseVal * 4.0; 
     
     // Distance from the nearest integer (contour center)
     float dist = abs(fract(lineVal) - 0.5); 
