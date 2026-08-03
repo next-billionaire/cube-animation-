@@ -46,27 +46,26 @@ export const topographicFragmentShader = `
 
   void main() {
     // Use vPosition instead of vUv to ensure perfect aspect ratio (no stretching)
-    // Scale dictates the physical size of the blobs on screen
-    vec2 p = vPosition.xy * 0.15; 
+    // Increased scale to 0.8 to zoom out, showing more islands/blobs like the screenshot
+    vec2 p = vPosition.xy * 0.8; 
     
     // Add continuous directional scrolling (panning diagonally)
-    p.y += uTime * 0.03;
-    p.x += uTime * 0.015;
+    p.y += uTime * 0.05;
+    p.x += uTime * 0.025;
     
     // Very slow domain warping vectors
-    float warpTime = uTime * 0.01;
+    float warpTime = uTime * 0.02;
     vec2 warp = vec2(
       snoise(p * 0.4 + vec2(warpTime, 0.0)),
       snoise(p * 0.4 + vec2(0.0, warpTime))
     );
 
     // Single octave Simplex noise for perfectly smooth, large blobs and winding channels
-    // exactly matching the reference image pattern.
     float noiseVal = snoise(p + warp * 0.6);
 
-    // Number of contour lines mapped over the noise value (-1.0 to 1.0)
-    // 3.5 creates massive spacing exactly like the screenshot
-    float lineVal = noiseVal * 3.5; 
+    // Increased multiplier to 8.0 to get more concentric contour rings per peak
+    // This perfectly matches the line density in the screenshot
+    float lineVal = noiseVal * 8.0; 
     
     // Distance from the nearest integer (contour center)
     float dist = abs(fract(lineVal) - 0.5); 
@@ -78,7 +77,7 @@ export const topographicFragmentShader = `
     float line = smoothstep(fw * 0.8, 0.0, dist);
     
     // Mix background and line color
-    vec3 col = mix(uColorBg, uColorLine, line * 0.35);
+    vec3 col = mix(uColorBg, uColorLine, line * 0.4);
 
     gl_FragColor = vec4(col, 1.0);
   }
