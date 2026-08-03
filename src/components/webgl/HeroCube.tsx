@@ -126,7 +126,7 @@ export function HeroCube() {
             <edgesGeometry attach="geometry" args={[halfGeo]} />
             <lineBasicMaterial attach="material" color={0xF7B500} transparent opacity={0.95} />
           </lineSegments>
-          <lineSegments scale={1.06}>
+          <lineSegments scale={1.01}>
             <edgesGeometry attach="geometry" args={[halfGeo]} />
             <lineBasicMaterial attach="material" color={0xF7B500} transparent opacity={0.25} />
           </lineSegments>
@@ -143,7 +143,7 @@ export function HeroCube() {
             <edgesGeometry attach="geometry" args={[halfGeo]} />
             <lineBasicMaterial attach="material" color={0xF7B500} transparent opacity={0.95} />
           </lineSegments>
-          <lineSegments scale={1.06}>
+          <lineSegments scale={1.01}>
             <edgesGeometry attach="geometry" args={[halfGeo]} />
             <lineBasicMaterial attach="material" color={0xF7B500} transparent opacity={0.25} />
           </lineSegments>
