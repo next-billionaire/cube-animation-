@@ -38,7 +38,7 @@ export function Intro() {
   if (timelineFinished) return null;
 
   return (
-    <div className="intro-wrapper fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-background">
+    <div className="intro-wrapper fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-white">
       <LogoReveal />
     </div>
   );

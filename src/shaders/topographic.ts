@@ -56,8 +56,8 @@ export const topographicFragmentShader = `
   }
 
   void main() {
-    // Lower scale for even wider, smoother contours (increased size)
-    vec2 p = vUv * 0.4; 
+    // Lower scale significantly for massive, sweeping contours
+    vec2 p = vUv * 0.15; 
     
     // Extremely slow breathing animation
     float t = uTime * 0.015; 
@@ -73,8 +73,8 @@ export const topographicFragmentShader = `
 
     float f = fbm(p + r);
 
-    // Number of contour lines mapped over the noise value (lower for fewer lines and larger spacing)
-    float lineVal = f * 5.0; 
+    // Number of contour lines mapped over the noise value (lower for fewer lines and massive spacing)
+    float lineVal = f * 3.0; 
     
     // Distance from the nearest integer (contour center)
     float dist = abs(fract(lineVal) - 0.5); 

@@ -8,8 +8,8 @@ import { topographicVertexShader, topographicFragmentShader } from "@/shaders/to
 export const TopographicMaterial = shaderMaterial(
   {
     uTime: 0,
-    uColorBg: new THREE.Color("#FFFFFF"),
-    uColorLine: new THREE.Color("#E5E2DB"),
+    uColorBg: new THREE.Color("#050505"),
+    uColorLine: new THREE.Color("#FFFFFF"),
   },
   topographicVertexShader,
   topographicFragmentShader
