@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
-import { GlobalCanvas } from "@/components/webgl/GlobalCanvas";
 import { Navbar } from "@/components/navigation/Navbar";
 
 const inter = Inter({
@@ -31,7 +30,6 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <body className="antialiased selection:bg-white selection:text-black">
         <SmoothScroll>
-          <GlobalCanvas />
           <Navbar />
           <main>{children}</main>
         </SmoothScroll>
